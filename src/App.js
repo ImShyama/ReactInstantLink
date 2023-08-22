@@ -2,19 +2,17 @@ import './App.css';
 import Home from './component/home';
 import Header from './component/header';
 import Footer from './component/footer';
-import Links from './component/Links';
 import { useEffect, useState } from 'react';
-import { Button } from "@mui/material";
-import TextField from '@mui/material/TextField';
 import axios from 'axios';
-const URL = "https://script.google.com/macros/s/AKfycby0coFdkup_lZu0-OmrwhO5OtyGs2EFWgIg0SG9tFLxtdNY3tcgi2QbApXGi5k2Zjcikg/exec";
+const URL = "https://script.google.com/macros/s/AKfycbyKpVhShe8dwbdz72hWjMnahGRqSVqhxpInGf_mliCced8PhVUjM4ta_2Q5F4IVfqQuvQ/exec";
+// const URL = "https://script.google.com/macros/s/AKfycby0coFdkup_lZu0-OmrwhO5OtyGs2EFWgIg0SG9tFLxtdNY3tcgi2QbApXGi5k2Zjcikg/exec";
+
 
 function App() {
   const [myData, setMyData] = useState([]);
   const [isError, setIsError] = useState("");
   const [settingsData, setSettingsData] = useState(null);
-  const [search, setSearch] = useState("");
-
+  
   // using Async Await
   const getMyData = async () => {
     try {
@@ -22,6 +20,7 @@ function App() {
       setMyData(res.data);
       setSettingsData({
         "headerImg": res.data.settingData.mainBody.logoImage,
+        "bgImg": res.data.settingData.mainBody.backgroundImage,
         "headerTxt": res.data.settingData.heading.text,
         "headerColor": res.data.settingData.heading.color,
         "headerFontSize": res.data.settingData.heading.fontSize
@@ -33,20 +32,12 @@ function App() {
 
   useEffect(() => {
     getMyData();
+    console.log(myData)
+    console.log(settingsData)
   }, [])
 
-  const customStyles = {
-    padding: '10px',
-    margin: '10px',
-    borderRadius: '8px',
-    width: '30%',
-    border: 'none',
-    cursor: 'pointer'
-  };
-
   return (
-
-    <div style={settingsData !== null ? { backgroundImage: 'url("https://i.ibb.co/Bwn7Mdm/dylan-nolte-SH-Ijr-Kw-G8c-unsplash.jpg")', minHeight:'100vh' } : {}}>
+    <div style={settingsData !== null ? { backgroundImage: `url(${myData.settingData.mainBody.backgroundImage})`, minHeight:'100vh' } : {}}>
       {isError !== "" && <h1>isError</h1>}
       {
         settingsData !== null &&
@@ -54,48 +45,24 @@ function App() {
           header={settingsData}
         />
       }
-      <div style={{ textAlign: "center" }}>
-        <input type="search" onChange={(e) => setSearch(e.target.value)} style={customStyles} id="gsearch" name="gsearch" placeholder='Search' />
-      </div>
 
       {
         settingsData !== null &&
-        // <Home
-        //   linkdata={myData}
-        //   box={myData.settingData.box}
-        // />
-        myData.linksData.filter((item)=>{
-          return search.toLocaleLowerCase() ===""
-          ? item
-          : item.description.toLocaleLowerCase().includes(search);
-        })
-        .map((link) => (
-          <Links link={link} box={myData.settingData.box}/>
-        ))
+        <Home
+          linkdata={myData.linksData}
+          box={myData.settingData.box}
+          searchBox ={myData.settingData.mainBody.search}
+        />
+        // myData.linksData.filter((item)=>{
+        //   return search.toLocaleLowerCase() ===""
+        //   ? item
+        //   : item.description.toLocaleLowerCase().includes(search);
+        // })
+        // .map((link) => (
+        //   <Links link={link} box={myData.settingData.box}/>
+        // ))
       }
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          margin: "10px auto"
-        }}
-        className="prev-next-container"
-      >
-        <Button
-          variant="outlined"
-        // onClick={handlePrevPage}
-        // disabled={currentPage === 0}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outlined"
-        // onClick={handleNextPage}
-        // disabled={currentPage === totalPages - 1}
-        >
-          Next
-        </Button>
-      </div>
+      
       {
         settingsData !== null &&
         <Footer footer={myData.settingData.footer} />
@@ -103,6 +70,8 @@ function App() {
 
     </div>
   );
+
+  
 }
 
 export default App;

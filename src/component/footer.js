@@ -13,7 +13,6 @@ const Footer = ({footer}) => {
   return (
     <div className='div-center' style={customStyles}>
       <ul >
-        {console.log(footer.icons)}
         {Object.keys(footer.icons).map((key, index) => (
           <li style={{display: 'inline-block', marginInline: '10px'}} >
             <a href={footer.icons[key]['imgLink']}><img src={footer.icons[key]['imgUrl']} style={{height:'25px',width:'25px'}}/></a>
